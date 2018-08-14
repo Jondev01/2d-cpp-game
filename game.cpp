@@ -1,9 +1,11 @@
 #include "Game.hpp"
 #include "TextureManager.h"
 #include "gameObject.h"
+#include "map.h"
 
 GameObject* player;
 SDL_Renderer* Game::renderer=NULL;
+Map *gameMap;
 
 Game::Game(){
     isRunning = false;
@@ -29,6 +31,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         isRunning = false;
     }
     player = new GameObject("box.png", 100, 100);
+    gameMap = new Map();
 
 }
 void Game::handleEvents(){
@@ -43,6 +46,17 @@ void Game::handleEvents(){
         break;
     case SDL_KEYDOWN:
         cout << "A key was pressed " << SDL_GetKeyName(event.key.keysym.sym)<<endl;
+        if(event.key.keysym.sym == SDLK_RIGHT)
+            player->setXvel(2);
+        else if(event.key.keysym.sym == SDLK_LEFT)
+            player->setXvel(-2);
+        break;
+    case SDL_KEYUP:
+        cout << "A key was released " << SDL_GetKeyName(event.key.keysym.sym)<<endl;
+        if(event.key.keysym.sym == SDLK_RIGHT && player->getXvel()>0)
+            player->setXvel(0);
+        else if(event.key.keysym.sym == SDLK_LEFT && player->getXvel()<0)
+            player->setXvel(0);
         break;
     default:
         break;
@@ -53,6 +67,7 @@ void Game::update(){
 }
 void Game::render(){
     SDL_RenderClear(renderer);
+    gameMap->DrawMap();
     player->render();
     SDL_RenderPresent(renderer);
 

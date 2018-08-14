@@ -7,8 +7,11 @@ public:
 
     void update();
     void render();
+    void setXvel(int x);
+    int getXvel();
+    void setYvel(int y);
 private:
-    int xpos,ypos;
+    int xpos,ypos, xvel, yvel;
     SDL_Texture* objTexture;
     SDL_Rect srcRect, destRect;
 };

@@ -5,13 +5,13 @@ public:
     Map();
     ~Map();
 
-    void LoadMap();
+    void LoadMap(int arr[25][25]);
     void DrawMap();
 
 private:
     SDL_Rect src, dest;
-    SDL_Texture* dirt;
+    SDL_Texture* sky;
     SDL_Texture* grass;
-    SDL_Texture* water;
-    int theMap[20][25];
+    SDL_Texture* spike;
+    int theMap[25][25];
 };
