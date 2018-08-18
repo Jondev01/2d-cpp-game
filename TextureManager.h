@@ -1,3 +1,5 @@
+#ifndef TextureManager_h
+#define TextureManager_h
 #include "game.hpp"
 
 class TextureManager{
@@ -7,3 +9,4 @@ public:
     static void Draw(SDL_Texture* tex, SDL_Rect src, SDL_Rect dest);
 
 };
+#endif

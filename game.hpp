@@ -1,10 +1,13 @@
 #ifndef Game_hpp
 #define Game_hpp
-
 #include "SDL2/SDL.h"
 #include <iostream>
 #include <string>
 #include "SDL2/SDL_image.h"
+#include "TextureManager.h"
+#include "map.h"
+#include "gameObject.h"
+
 using namespace std;
 
 class Game {
