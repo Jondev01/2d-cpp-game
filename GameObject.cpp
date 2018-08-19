@@ -6,7 +6,6 @@
 
 GameObject::GameObject(const char* textureSheet, int x, int y){
     fall = false;
-    fallTime = 0;
     xpos = x;
     ypos = y;
     xvel=0;
@@ -17,43 +16,23 @@ GameObject::GameObject(const char* textureSheet, int x, int y){
     srcRect.y = 0;
     destRect.x = xpos;
     destRect.y = ypos;
-    destRect.w = srcRect.w;
-    destRect.h = srcRect.h;
+    destRect.w = 24;
+    destRect.h = 24;
     objTexture = TextureManager::LoadTexture(textureSheet);
 }
 
-void GameObject::update(){
+void GameObject::update(bool updatex, bool updatey){
     if(fall){
-        fallTime++;
         yvel += gravity;
     }
     xpos += xvel;
     ypos += (int)yvel;
-    if(xpos<0)
-        xpos = 0;
-    if(ypos<0)
-        ypos = 0;
-        //collisions
-    /*if(yvel>0 && (gameMap->collision(xpos, ypos+32, 1) || gameMap->collision(xpos+32, ypos+32, 1)))
-        this->stopFall();
-    if(!fall && gameMap->collision(xpos, ypos+32, 0)&& gameMap->collision((xpos)+32, ypos+32, 0))
-        this->startFall();
-    if(yvel<0 && gameMap->collision(xpos, ypos, 1)){
-        yvel = 0;
-        ypos = ((ypos+32)/32)*32;
-    }
-    else if(xvel<0 && gameMap->collision(xpos, ypos, 1)){
-        xvel = 0;
-        xpos = ((xpos+32)/32)*32;
-    }
-    else if(xvel>0 && gameMap->collision(xpos+32, ypos, 1)){
-        xvel = 0;
-        xpos =((xpos)/32)*32;
-    }*/
 
-
-    destRect.x = xpos;
-    destRect.y = ypos;
+    if(!updatex)
+        destRect.x += xvel;
+    if(!updatey){
+       destRect.y += (int)yvel;
+    }
 }
 
 void GameObject::render(){
@@ -73,11 +52,38 @@ void GameObject::setYvel(int y){
 }
 
 void GameObject::stopFall(){
-    if(yvel < ypos - (ypos/32)*32)
-        return;
     fall = false;
-    fallTime=0;
     yvel = 0;
-    ypos = (ypos/32)*32;
+    ypos = (ypos/32)*32+32-this->destRect.h;
+}
+
+void GameObject::adjustToLevel(int h, int startX, int startY){
+    xpos = startX*32;
+    ypos = (h-startY)*32+32-destRect.h;
+    destRect.x = xpos;
+    destRect.y = HEIGHT-(startY)*32+32-destRect.h;
+}
+
+void GameObject::yAdjust(int offset){
+            destRect.y += offset;
+}
+
+void GameObject::xAdjust(int offset){
+        destRect.x += offset;
+}
+
+void GameObject::yAlign(bool up){
+    if(up)
+            destRect.y  = (destRect.y)/32*32;
+    else
+            destRect.y  = (destRect.y+32)/32*32;
+
+}
+
+void GameObject::xAlign(bool left){
+    if(left)
+            destRect.x  = (destRect.x)/32*32;
+    else
+            destRect.x  = (destRect.x+32)/32*32;
 }
 

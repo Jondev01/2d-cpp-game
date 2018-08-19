@@ -1,23 +1,34 @@
 #ifndef map_h
 #define map_h
 #include "game.hpp"
+#include <vector>
+#include "tile.h"
+#include "Level.h"
+using namespace std;
+class Tile;
 
 class Map{
 public:
-    Map();
+    Map(Level& level);
     ~Map();
 
-    void LoadMap(int arr[25][25]);
+    void LoadMap();
     void DrawMap();
     bool collision(int xpos, int ypos, int type);
-
+    vector<Tile> tiles;
+    void addTile(int row, int column, int x, int y, int type);
+    void update(int xvel, int yvel, bool updatex, bool updatey);
+    void yAdjust(int offset);
+    void xAdjust(int offset);
+    int yAlign(bool up);
+    int xAlign(bool left);
+    vector<int> theMap;
 private:
     SDL_Rect src, dest;
     SDL_Texture* sky;
     SDL_Texture* grass;
-    SDL_Texture* spike;
-    int theMap[25][25];
-    int testMap[50*30];
-    int cam_x, cam_y, cam_vx, camvy;
+    SDL_Texture* lava;
+    //vector<int> theMap;
+    Level level;
 };
 #endif

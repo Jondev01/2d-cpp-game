@@ -8,11 +8,11 @@ int main(int argc, char* argv[]){
     int frameTime, temp;
 
     game = new Game();
-    game->init("simpleGame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 640, false);
+    game->init("simpleGame", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, false);
+    game->menu();
     while(game->running()){
         temp = frameStart;
         frameStart = SDL_GetTicks() - temp;
-
         game->handleEvents();
         game->update();
         game->render();

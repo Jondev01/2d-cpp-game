@@ -2,38 +2,13 @@
 #include "map.h"
 #include "TextureManager.h"
 #include <fstream>
-int lvl1[25][25] ={
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-};
-Map::Map(){
+#include <math.h>
+
+Map::Map(Level& curLevel):level(curLevel){
     sky = TextureManager::LoadTexture("sky.png");
     grass = TextureManager::LoadTexture("grass.png");
-    spike = TextureManager::LoadTexture("spike.png");
-    LoadMap(lvl1);
+    lava = TextureManager::LoadTexture("lava.png");
+    LoadMap();
     src.x=src.y=0;
     src.w=dest.w=32;
     src.h=dest.h=32;
@@ -42,70 +17,112 @@ Map::Map(){
 Map::~Map(){
     SDL_DestroyTexture(sky);
     SDL_DestroyTexture(grass);
-    SDL_DestroyTexture(spike);
+    SDL_DestroyTexture(lava);
 }
 
-void Map::LoadMap(int arr[25][25]){
-    for(int i=0; i<25; i++){
-        for(int j=0; j<25; j++)
-            theMap[i][j] = arr[i][j];
-    }
+void Map::LoadMap(){
+    theMap.resize(level.width*level.height,0);
     fstream readFile;
     char type;
-    readFile.open("test.txt");
-    for(int j = 0; j<30;j++){
-            cout << j <<"\t";
-        for(int i=0; i<50;i++){
+    readFile.open(level.fileName);
+    for(int j = 0; j<level.height;j++){
+           // cout << j <<"\t";
+        for(int i=0; i<level.width;i++){
             readFile.get(type);
             //cout << type;
-            testMap[j*50+i]=(int)type-'0';
-            cout << testMap[j*50+i];
+            theMap[j*level.width+i]=(int)type-'0';
+            addTile(j,i, i*32, (j-(level.height))*32+HEIGHT,(int)type-'0');
             readFile.ignore();
         }
         readFile.ignore();
-        cout<<endl;
+       // cout<<endl;
     }
     readFile.close();
-    for(int j = 0; j<30;j++){
+   /* for(int j = 0; j<level.height;j++){
             cout << j<<"\t";
-        for(int i=0; i<50;i++){
-            cout << testMap[j*50+i];
+        for(int i=0; i<level.width;i++){
+            cout << theMap[j*level.width+i];
         }
         cout << endl;
-    }
+    }*/
 }
 
 void Map:: DrawMap(){
-    int type = 0;
-    for(int i=0; i<20; i++){
-        for(int j=0; j<25; j++){
-            type = theMap[i][j];
-            //type = testMap[(i+10)*50+j];
-            dest.x = j*32;
-            dest.y = i*32;
-            switch(type){
-            case 0:
-                TextureManager::Draw(sky, src, dest);
-                break;
-            case 1:
-                TextureManager::Draw(grass, src, dest);
-                break;
-            case 2:
-                TextureManager::Draw(spike, src, dest);
-                break;
-            }
-        }
+    //cout << tiles.size();
+    for(int i=0;i<tiles.size();i++){
+        tiles[i].draw(sky, grass, lava);
     }
 }
 
 bool Map::collision(int xpos, int ypos, int type){
     //cout << "(" << xpos/32 << "," << ypos/32 << ")\t;\n";
-    if(xpos <0 || xpos/32 >=25 || ypos<0 || ypos/32>= 25)
-        return false;
-   // cout << theMap[ypos/32][xpos/32] << endl;
-    if(theMap[ypos/32][xpos/32] == type){
-     //       cout << "TRUE\n";
+    if(theMap[(ypos/32)*level.width+xpos/32] == type)
         return true;
-    }
     return false;
+}
+
+void Map::addTile(int row, int column, int x, int y, int type){
+    this->tiles.push_back(Tile(row, column, x, y, type));
+}
+
+void Map::update(int xvel, int yvel, bool updatex, bool updatey){
+    for(int i=0;i<tiles.size();i++){
+        if(updatex)
+            tiles[i].destRect.x -= xvel;
+        if(updatey)
+            tiles[i].destRect.y -= yvel;
+    }
+}
+
+void Map::yAdjust(int offset){
+    for(int i=0;i<tiles.size();i++){
+        tiles[i].destRect.y -= offset;
+    }
+}
+
+int Map::yAlign(bool up){
+    int offset=0;
+    if(up){
+        if(tiles[0].destRect.y>= 0)
+            offset = tiles[0].destRect.y  - tiles[0].destRect.y/32*32;
+            for(int i=0;i<tiles.size();i++){
+                tiles[i].destRect.y  = tiles[i].destRect.y/32*32;
+            }
+        return fabs(offset);
+    }
+    else{
+        if(tiles[0].destRect.y> -32)
+            offset = tiles[0].destRect.y-((tiles[0].destRect.y+31)/32)*32;
+        else
+            offset = tiles[0].destRect.y-((tiles[0].destRect.y+31)/32)*32+32;
+        for(int i=0;i<tiles.size();i++){
+            if(tiles[i].destRect.y>-32)
+                tiles[i].destRect.y  = ((tiles[i].destRect.y+31)/32)*32;
+            else tiles[i].destRect.y  = ((tiles[i].destRect.y+31)/32)*32-32;
+        }
+        return fabs(offset);
+    }
+}
+
+void Map::xAdjust(int offset){
+    for(int i=0;i<tiles.size();i++){
+        tiles[i].destRect.x -= offset;
+    }
+}
+
+int Map::xAlign(bool left){
+    int offset;
+    if(left){
+        offset = tiles[0].destRect.x  - tiles[0].destRect.x/32*32;
+        for(int i=0;i<tiles.size();i++){
+            tiles[i].destRect.x  = tiles[i].destRect.x/32*32;
+        }
+    }
+    else {
+        offset = tiles[0].destRect.x  - (tiles[0].destRect.x+31)/32*32;
+        for(int i=0;i<tiles.size();i++){
+            tiles[i].destRect.x  = (tiles[i].destRect.x+31)/32*32;
+        }
+    }
+    return fabs(offset);
 }
