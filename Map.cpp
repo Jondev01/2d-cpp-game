@@ -83,8 +83,10 @@ void Map::yAdjust(int offset){
 int Map::yAlign(bool up){
     int offset=0;
     if(up){
-        if(tiles[0].destRect.y>= 0)
+        if(tiles[0].destRect.y>-32)
             offset = tiles[0].destRect.y  - tiles[0].destRect.y/32*32;
+        else
+            offset = tiles[0].destRect.y-((tiles[0].destRect.y)/32)*32+32;
             for(int i=0;i<tiles.size();i++){
                 tiles[i].destRect.y  = tiles[i].destRect.y/32*32;
             }
@@ -119,9 +121,14 @@ int Map::xAlign(bool left){
         }
     }
     else {
-        offset = tiles[0].destRect.x  - (tiles[0].destRect.x+31)/32*32;
+        if(tiles[0].destRect.x> -32)
+            offset = tiles[0].destRect.x-((tiles[0].destRect.x+31)/32)*32;
+        else
+            offset = tiles[0].destRect.x-((tiles[0].destRect.x+31)/32)*32+32;
         for(int i=0;i<tiles.size();i++){
-            tiles[i].destRect.x  = (tiles[i].destRect.x+31)/32*32;
+            if(tiles[i].destRect.x>-32)
+                tiles[i].destRect.x  = ((tiles[i].destRect.x+31)/32)*32;
+            else tiles[i].destRect.x  = ((tiles[i].destRect.x+31)/32)*32-32;
         }
     }
     return fabs(offset);

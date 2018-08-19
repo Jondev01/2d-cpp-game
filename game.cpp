@@ -139,21 +139,19 @@ void Game::update(){
     int h = player->getH();
     //check if scrolling map or not
     bool updatex = true, updatey =true;
-    if(player->destRect.x >= player->getxPos() || WIDTH-player->destRect.x >= levelW - player->getyPos() ){
-        if(player->destRect.x > player->getxPos()){
+        if(player->destRect.x >= player->getxPos()){
             player->destRect.x -=(gameMap->xAlign(true));
-            if(player->destRect.x <= WIDTH-7*32)
+            if(player->destRect.x >= WIDTH-7*32)
                 updatex = true;
             else updatex = false;
         }
-        else {
+        else if (WIDTH-player->destRect.x >= levelW - player->getxPos()){
                player->destRect.x+=(gameMap->xAlign(false));
-               if(player->destRect.x>=7*32)
+               if(player->destRect.x<=7*32)
                     updatex = true;
                 else updatex = false;
         }
-    }
-       if(player->destRect.y >= player->getyPos()){
+        if(player->destRect.y >= player->getyPos()){
             player->destRect.y -= gameMap->yAlign(true);
             if(player->destRect.y >= HEIGHT-5*32)
                 updatey = true;
@@ -163,7 +161,6 @@ void Game::update(){
             player->destRect.y += (gameMap->yAlign(false));
             if(player->destRect.y <= 10*32){
                 updatey = true;
-                cout << "hej";
             }
             else updatey = false;
         }
