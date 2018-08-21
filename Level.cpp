@@ -10,7 +10,7 @@ Level::Level(char* path, int w, int h, int X, int Y){
 }
 
 void Level::ReadMap(){
-    fstream readFile;
+    std::fstream readFile;
     readFile.open(this->fileName);
     char type;
     for(int j = 0; j<this->height;j++){

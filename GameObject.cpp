@@ -54,7 +54,7 @@ void GameObject::setYvel(int y){
 void GameObject::stopFall(){
     fall = false;
     yvel = 0;
-    ypos = (ypos/32)*32+32-this->destRect.h;
+    ypos = ((ypos)/32)*32+32-this->destRect.h;
 }
 
 void GameObject::adjustToLevel(int h, int startX, int startY){

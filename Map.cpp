@@ -8,6 +8,7 @@ Map::Map(Level& curLevel):level(curLevel){
     sky = TextureManager::LoadTexture("sky.png");
     grass = TextureManager::LoadTexture("grass.png");
     lava = TextureManager::LoadTexture("lava.png");
+    finish = TextureManager::LoadTexture("finish.png");
     LoadMap();
     src.x=src.y=0;
     src.w=dest.w=32;
@@ -22,7 +23,7 @@ Map::~Map(){
 
 void Map::LoadMap(){
     theMap.resize(level.width*level.height,0);
-    fstream readFile;
+    std::fstream readFile;
     char type;
     readFile.open(level.fileName);
     for(int j = 0; j<level.height;j++){
@@ -50,12 +51,11 @@ void Map::LoadMap(){
 void Map:: DrawMap(){
     //cout << tiles.size();
     for(int i=0;i<tiles.size();i++){
-        tiles[i].draw(sky, grass, lava);
+        tiles[i].draw(sky, grass, lava, finish);
     }
 }
 
 bool Map::collision(int xpos, int ypos, int type){
-    //cout << "(" << xpos/32 << "," << ypos/32 << ")\t;\n";
     if(theMap[(ypos/32)*level.width+xpos/32] == type)
         return true;
     return false;
@@ -66,11 +66,12 @@ void Map::addTile(int row, int column, int x, int y, int type){
 }
 
 void Map::update(int xvel, int yvel, bool updatex, bool updatey){
-    for(int i=0;i<tiles.size();i++){
+
+    for(auto &t : tiles){
         if(updatex)
-            tiles[i].destRect.x -= xvel;
+            t.destRect.x -= xvel;
         if(updatey)
-            tiles[i].destRect.y -= yvel;
+            t.destRect.y -= yvel;
     }
 }
 
@@ -113,9 +114,12 @@ void Map::xAdjust(int offset){
 }
 
 int Map::xAlign(bool left){
-    int offset;
+    int offset=0;
     if(left){
-        offset = tiles[0].destRect.x  - tiles[0].destRect.x/32*32;
+        if(tiles[0].destRect.x>-32)
+            offset = tiles[0].destRect.x  - tiles[0].destRect.x/32*32;
+        else
+            offset = tiles[0].destRect.x-((tiles[0].destRect.x)/32)*32+32;
         for(int i=0;i<tiles.size();i++){
             tiles[i].destRect.x  = tiles[i].destRect.x/32*32;
         }

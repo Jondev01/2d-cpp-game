@@ -27,8 +27,8 @@ Tile::Tile(int row, int column, int x, int y, int type){
     destRect.h = 32;
 }
 
-void Tile::draw(SDL_Texture* sky, SDL_Texture* grass, SDL_Texture* lava){
-    if(!( (destRect.x+32>=0 && destRect.x<=800) && (destRect.y+32>=0 && destRect.y<=640)))
+void Tile::draw(SDL_Texture* sky, SDL_Texture* grass, SDL_Texture* lava, SDL_Texture* finish){
+    if(!( (destRect.x+32>=0 && abs(destRect.x)<=WIDTH) && (destRect.y+32>=0 && abs(destRect.y)<=HEIGHT)))
         return;
    //  cout << destRect.x << " " << destRect.y << endl;
     // cout << srcRect.x << " " << srcRect.y << endl;
@@ -38,6 +38,8 @@ void Tile::draw(SDL_Texture* sky, SDL_Texture* grass, SDL_Texture* lava){
         TextureManager::Draw(grass, this-> srcRect, this->destRect);
     else if(type ==2)
         TextureManager::Draw(lava, this-> srcRect, this->destRect);
+    else if(type ==3)
+        TextureManager::Draw(finish, this-> srcRect, this->destRect);
     else
         TextureManager::Draw(sky, this-> srcRect, this->destRect);
 }

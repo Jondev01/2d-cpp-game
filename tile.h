@@ -5,7 +5,7 @@ class TextureManager;
 class Tile{
 public:
     Tile(int row, int column, int x, int y, int type);
-    void draw(SDL_Texture* sky, SDL_Texture* grass, SDL_Texture* lava);
+    void draw(SDL_Texture* sky, SDL_Texture* grass, SDL_Texture* lava, SDL_Texture* finish);
     SDL_Rect srcRect, destRect;
 private:
     int x, y;

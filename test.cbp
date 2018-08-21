@@ -30,6 +30,8 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++0x" />
+			<Add option="-std=c11" />
 			<Add directory="C:/Users/Wernersson/Documents/Programming/2018/SDL_minGW/SDL2-2.0.8/i686-w64-mingw32/include" />
 			<Add directory="C:/Users/Wernersson/Documents/Programming/2018/SDL_image/SDL2_image-2.0.3/i686-w64-mingw32/include" />
 			<Add directory="C:/Users/Wernersson/Documents/Programming/2018/SDL_minGW/SDL2-2.0.8/i686-w64-mingw32/include/SDL2" />
