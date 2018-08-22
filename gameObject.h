@@ -28,7 +28,7 @@ public:
     void xAlign(bool left);
 
     SDL_Rect srcRect, destRect;
-    static constexpr double gravity = 0.6, jumpSpeed = 10;
+    static constexpr double gravity = 0.59, jumpSpeed = 10;
     static const int speed = 3;
 
 private:

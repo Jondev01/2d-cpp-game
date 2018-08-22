@@ -29,6 +29,7 @@ class Game {
         void getHighscore();
         void newHighscore();
         void displayHighscore();
+        void displayLevel();
         bool running();
         static SDL_Renderer *renderer;
     private:

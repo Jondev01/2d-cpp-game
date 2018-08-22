@@ -7,6 +7,7 @@ int addSpeed = 0;
 
 Level newlevel1("newLevel1.txt",50,30,2,2);
 Level newlevel2("newLevel2.txt",50,30,2,2);
+Level newlevel3("newLevel3.txt",50,30,2,5);
 Level level1("Level1.txt",50,30,2,2);
 Level level2("Level2.txt",100,30,2,2);
 std::vector<Level> levels;
@@ -19,6 +20,7 @@ Game::~Game(){}
 void Game::init(const char* title, int xpos, int ypos, int width, int height, bool fullscreen){
     levels.push_back(newlevel1);
     levels.push_back(newlevel2);
+    levels.push_back(newlevel3);
     levels.push_back(level1);
     levels.push_back(level2);
     int flags = 0;
@@ -47,7 +49,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
 
 bool Game::menu(){
     isRunning = true;
-    const char* msg = "Select Level by pressing '1', '2','3' etc.";
+    const char* msg = "Select level by pressing '1', '2','3' etc.";
     bool play = false;
     TTF_Init();
     TTF_Font* font = TTF_OpenFont("Sans.ttf", 24);
@@ -70,6 +72,8 @@ bool Game::menu(){
         SDL_RenderClear(renderer);
         gameMap->DrawMap();
         player->render();
+        displayHighscore();
+        displayLevel();
         SDL_RenderCopy(Game::renderer, tempTexture, NULL, &msgRect);
         SDL_RenderPresent(Game::renderer);
         SDL_Event event;
@@ -105,11 +109,18 @@ bool Game::menu(){
                 delete gameMap;
                 gameMap = new Map(levels[level-1]);
                 break;
-            case SDLK_SPACE:
+            case SDLK_5:
+               // cout << "Load level 2";
+               level = 5;
+                delete gameMap;
+                gameMap = new Map(levels[level-1]);
+                break;
             case SDLK_a:
             case SDLK_d:
             case SDLK_RIGHT:
+                addSpeed = GameObject::speed;
             case SDLK_LEFT:
+            case SDLK_SPACE:
             case SDLK_RETURN:
                     loop = false;
                     play = true;
@@ -138,6 +149,11 @@ void Game::handleEvents(){
     switch(event.type){
     case SDL_QUIT:
         isRunning = false;
+        player->setXvel(0); player->setYvel(0);
+        player->stopFall();
+        addSpeed = 0;
+        delete gameMap;
+        gameMap = new Map(levels[level-1]);
         break;
     case SDL_KEYDOWN:
         switch(event.key.keysym.sym){
@@ -156,7 +172,11 @@ void Game::handleEvents(){
                 break;
             case SDLK_ESCAPE:
                 isRunning = false;
-
+                player->setXvel(0); player->setYvel(0);
+                player->stopFall();
+                addSpeed = 0;
+                delete gameMap;
+                gameMap = new Map(levels[level-1]);
         }
         break;
     case SDL_KEYUP:
@@ -258,8 +278,8 @@ void Game::update(){
     /*if(gameMap->collision(player->getxPos(), player->getyPos(), 1))
         cout << "Grass detected!\t";*/
     //Run into lava block
-    if(gameMap->collision(player->getxPos()+w-1, player->getyPos(),2) || gameMap->collision(player->getxPos(), player->getyPos(),2) ||
-        gameMap->collision(player->getxPos()+w-1, player->getyPos()+h-1,2) || gameMap->collision(player->getxPos(), player->getyPos()+h-1,2)){
+    if((gameMap->collision(player->getxPos()+w-1, player->getyPos(),2) || gameMap->collision(player->getxPos(), player->getyPos(),2) ||
+        gameMap->collision(player->getxPos()+w-1, player->getyPos()+h,2) || gameMap->collision(player->getxPos(), player->getyPos()+h,2)) || player->getyPos()+h>levels[level-1].height*32){
        isRunning = false;
        player->setXvel(0); player->setYvel(0);
        player->stopFall();
@@ -320,6 +340,7 @@ void Game::render(){
     player->render();
     displayTime();
     displayHighscore();
+    displayLevel();
     SDL_RenderPresent(renderer);
 
 }
@@ -396,6 +417,33 @@ void Game::displayHighscore(){
     SDL_Rect msgRect;
     msgRect.x = WIDTH-tempSurface->w;
     msgRect.y = 40;
+    msgRect.w = tempSurface->w;
+    msgRect.h = tempSurface->h;
+    SDL_RenderCopy(Game::renderer, tempTexture, NULL, &msgRect);
+    SDL_FreeSurface(tempSurface);
+    SDL_DestroyTexture(tempTexture);
+    TTF_CloseFont(font);
+    delete font;
+}
+
+void Game::displayLevel(){
+    const char* msg;
+    std::string tempMsg;
+    tempMsg = "Level " + std::to_string(level);
+    msg = tempMsg.c_str();
+    TTF_Font* font = TTF_OpenFont("Sans.ttf", 20);
+    if(font == NULL)
+        std::cout << "Font could not be created";
+    SDL_Color textColor = {0, 0, 0};
+    SDL_Surface* tempSurface = TTF_RenderText_Solid(font, msg, textColor);
+    if(tempSurface == NULL)
+        std::cout << "Surface could not be created\n";
+    SDL_Texture* tempTexture = SDL_CreateTextureFromSurface(Game::renderer, tempSurface);
+    if(tempTexture == NULL)
+        std::cout << "texture could not be created";
+    SDL_Rect msgRect;
+    msgRect.x = 5;
+    msgRect.y = 0;
     msgRect.w = tempSurface->w;
     msgRect.h = tempSurface->h;
     SDL_RenderCopy(Game::renderer, tempTexture, NULL, &msgRect);
