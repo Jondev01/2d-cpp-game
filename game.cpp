@@ -5,11 +5,11 @@ SDL_Renderer* Game::renderer = nullptr;
 Map *gameMap = nullptr;
 int addSpeed = 0;
 
-Level newlevel1("newLevel1.txt",50,30,2,2);
-Level newlevel2("newLevel2.txt",50,30,2,2);
-Level newlevel3("newLevel3.txt",50,30,2,5);
-Level level1("Level1.txt",50,30,2,2);
-Level level2("Level2.txt",100,30,2,2);
+Level newlevel1("./assets/levels/newLevel1.txt",50,30,2,2);
+Level newlevel2("./assets/levels/newLevel2.txt",50,30,2,2);
+Level newlevel3("./assets/levels/newLevel3.txt",50,30,2,5);
+Level level1("./assets/levels/Level1.txt",50,30,2,2);
+Level level2("./assets/levels/Level2.txt",100,30,2,2);
 std::vector<Level> levels;
 Game::Game(){
     isRunning = false;
@@ -42,7 +42,7 @@ void Game::init(const char* title, int xpos, int ypos, int width, int height, bo
         isRunning = false;
     }
     getHighscore();
-    player = new GameObject("box.png", 10*32, height-6*32);
+    player = new GameObject("./assets/sprites/box.png", 10*32, height-6*32);
     gameMap = new Map(levels[level-1]);
     player->adjustToLevel(levels[level-1].height, levels[level-1].startX, levels[level-1].startY);
 }

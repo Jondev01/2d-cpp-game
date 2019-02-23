@@ -5,10 +5,10 @@
 #include <math.h>
 
 Map::Map(Level& curLevel):level(curLevel){
-    sky = TextureManager::LoadTexture("sky.png");
-    grass = TextureManager::LoadTexture("grass.png");
-    lava = TextureManager::LoadTexture("lava.png");
-    finish = TextureManager::LoadTexture("finish.png");
+    sky = TextureManager::LoadTexture("./assets/sprites/sky.png");
+    grass = TextureManager::LoadTexture("./assets/sprites/grass.png");
+    lava = TextureManager::LoadTexture("./assets/sprites/lava.png");
+    finish = TextureManager::LoadTexture("./assets/sprites/finish.png");
     LoadMap();
     src.x=src.y=0;
     src.w=dest.w=32;
